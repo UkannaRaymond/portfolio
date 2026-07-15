@@ -38,6 +38,7 @@ const iconMap = {
 const contactSchema = z.object({
   name: z.string().min(2, "Enter your name."),
   email: z.string().email("Enter a valid email address."),
+  title: z.string().min(2, "Enter a subject."),
   company: z.string().max(0),
   message: z.string().min(10, "Say a bit more — at least 10 characters."),
 });
@@ -49,7 +50,13 @@ export function Contact() {
 
   const form = useForm<ContactValues>({
     resolver: zodResolver(contactSchema),
-    defaultValues: { name: "", email: "", message: "", company: "" },
+    defaultValues: {
+      name: "",
+      email: "",
+      title: "",
+      message: "",
+      company: "",
+    },
   });
 
   async function onSubmit(values: ContactValues) {
@@ -74,9 +81,9 @@ export function Contact() {
         serviceId,
         templateId,
         {
-          from_name: values.name,
-          from_email: values.email,
-          reply_to: values.email,
+          name: values.name,
+          email: values.email,
+          title: values.title,
           message: values.message,
         },
         { publicKey },
@@ -84,7 +91,8 @@ export function Contact() {
 
       toast.success("Message sent — I'll get back to you soon.");
       form.reset();
-    } catch {
+    } catch (error) {
+      console.error("EmailJS contact form error:", error);
       toast.error("Something went wrong. Try again, or email me directly.");
     } finally {
       setIsSubmitting(false);
@@ -239,6 +247,24 @@ export function Contact() {
                               type="email"
                               placeholder="jane@company.com"
                               autoComplete="email"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="title"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Subject</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Project enquiry"
+                              autoComplete="off"
                               {...field}
                             />
                           </FormControl>

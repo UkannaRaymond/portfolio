@@ -29,8 +29,8 @@ to update it:
 ## Contact form
 
 The contact form uses EmailJS directly in the browser. In EmailJS, make sure
-the active template has these variables: `from_name`, `from_email`,
-`reply_to`, and `message`.
+the active template has these variables: `name`, `email`, `title`, and
+`message`.
 
 1. Add `NEXT_PUBLIC_EMAILJS_SERVICE_ID`, `NEXT_PUBLIC_EMAILJS_TEMPLATE_ID`,
    and `NEXT_PUBLIC_EMAILJS_PUBLIC_KEY` to `.env.local` (see `.env.example`).
