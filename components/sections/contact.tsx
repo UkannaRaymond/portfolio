@@ -6,7 +6,15 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
-import { Loader2, Send, Mail, MapPin, ArrowUpRight } from "lucide-react";
+import {
+  Loader2,
+  Send,
+  Mail,
+  MapPin,
+  ArrowUpRight,
+  Sparkles,
+  Clock3,
+} from "lucide-react";
 import emailjs from "@emailjs/browser";
 
 import { SectionHeading } from "@/components/sections/section-heading";
@@ -35,18 +43,26 @@ const iconMap = {
   mail: HiOutlineMail,
 };
 
+const MIN_FILL_TIME = 5000; // 5 seconds
+const SUBMIT_COOLDOWN = 60_000; // 60 seconds
+
 const contactSchema = z.object({
-  name: z.string().min(2, "Enter your name."),
+  name: z.string().min(2, "Enter your name.").max(100),
   email: z.string().email("Enter a valid email address."),
-  title: z.string().min(2, "Enter a subject."),
-  company: z.string().max(0),
-  message: z.string().min(10, "Say a bit more — at least 10 characters."),
+  title: z.string().min(2, "Enter a subject.").max(150),
+  message: z
+    .string()
+    .min(10, "Say a bit more — at least 10 characters.")
+    .max(2000),
 });
 
 type ContactValues = z.infer<typeof contactSchema>;
 
 export function Contact() {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+  // User must spend at least 5 seconds on the form
+  const formLoadedAt = React.useRef(Date.now());
 
   const form = useForm<ContactValues>({
     resolver: zodResolver(contactSchema),
@@ -55,14 +71,21 @@ export function Contact() {
       email: "",
       title: "",
       message: "",
-      company: "",
     },
   });
 
   async function onSubmit(values: ContactValues) {
-    // This hidden field should remain empty. Bots commonly fill every input.
-    if (values.company) {
-      form.reset();
+    // 5-second minimum completion time
+    if (Date.now() - formLoadedAt.current < MIN_FILL_TIME) {
+      toast.error("Please take a little more time to complete the form.");
+      return;
+    }
+
+    // 60-second cooldown
+    const lastSent = Number(localStorage.getItem("last-contact-send") ?? 0);
+
+    if (Date.now() - lastSent < SUBMIT_COOLDOWN) {
+      toast.error("Please wait 60 seconds before sending another message.");
       return;
     }
 
@@ -88,6 +111,9 @@ export function Contact() {
         },
         { publicKey },
       );
+
+      // Save timestamp
+      localStorage.setItem("last-contact-send", Date.now().toString());
 
       toast.success("Message sent — I'll get back to you soon.");
       form.reset();
@@ -121,13 +147,13 @@ export function Contact() {
               <div className="grid gap-4 md:grid-cols-2">
                 {/* Email */}
                 <Card className="transition-all duration-300 hover:-translate-y-1 hover:border-primary/40">
-                  <CardContent className="flex h-full items-center gap-4 p-5">
+                  <CardContent className="flex h-full items-center gap-4 p-6">
                     <Mail className="size-5 text-primary" />
 
                     <div>
                       <p className="font-semibold text-primary">Email</p>
                       <p className="text-sm text-muted-foreground">
-                        ukannand@example.com
+                        ukannaraymond@gmail.com
                       </p>
                     </div>
                   </CardContent>
@@ -135,7 +161,7 @@ export function Contact() {
 
                 {/* Location */}
                 <Card className="transition-all duration-300 hover:-translate-y-1 hover:border-primary/40">
-                  <CardContent className="flex h-full items-center gap-4 p-5">
+                  <CardContent className="flex h-full items-center gap-4 p-6">
                     <MapPin className="size-5 text-primary" />
 
                     <div>
@@ -198,6 +224,33 @@ export function Contact() {
                   })}
                 </div>
               </div>
+              <Card className="mt-8 overflow-hidden border-primary/20 bg-linear-to-br from-primary/10 via-primary/5 to-transparent">
+                <CardContent className="p-7">
+                  <div className="flex items-start gap-4">
+                    <div className="rounded-xl bg-primary/10 p-3">
+                      <Sparkles className="size-6 text-primary" />
+                    </div>
+
+                    <div className="flex-1">
+                      <h3 className="text-xl font-semibold">
+                        Let's build something exceptional.
+                      </h3>
+
+                      <p className="mt-3 leading-7 text-muted-foreground">
+                        Whether you're looking for a full-stack engineer,
+                        building an MVP, modernizing an existing application, or
+                        bringing a new idea to life, I'd love to hear about your
+                        project.
+                      </p>
+
+                      <div className="mt-6 flex items-center gap-2 text-sm font-medium text-primary">
+                        <Clock3 className="size-4" />
+                        Usually replies within 24 hours
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </Reveal>
           {/* RIGHT SIDE */}
@@ -207,17 +260,9 @@ export function Contact() {
               <CardContent className="p-8">
                 <Form {...form}>
                   <form
-                    onSubmit={form.handleSubmit(onSubmit)}
                     className="space-y-6"
+                    onSubmit={form.handleSubmit(onSubmit)}
                   >
-                    <input
-                      {...form.register("company")}
-                      type="text"
-                      tabIndex={-1}
-                      autoComplete="off"
-                      aria-hidden="true"
-                      className="absolute h-px w-px overflow-hidden opacity-0"
-                    />
                     <FormField
                       control={form.control}
                       name="name"
