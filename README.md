@@ -28,12 +28,16 @@ to update it:
 
 ## Contact form
 
-`components/sections/contact.tsx` posts to `app/api/contact/route.ts`, which
-currently just logs the submission. To send real emails:
+The contact form uses EmailJS directly in the browser. In EmailJS, make sure
+the active template has these variables: `from_name`, `from_email`,
+`reply_to`, and `message`.
 
-1. `npm install resend`
-2. Add `RESEND_API_KEY` to `.env.local` (see `.env.example`)
-3. Uncomment the Resend block in `app/api/contact/route.ts`
+1. Add `NEXT_PUBLIC_EMAILJS_SERVICE_ID`, `NEXT_PUBLIC_EMAILJS_TEMPLATE_ID`,
+   and `NEXT_PUBLIC_EMAILJS_PUBLIC_KEY` to `.env.local` (see `.env.example`).
+2. Add the same variables in Vercel's Environment Variables settings, then
+   redeploy.
+3. In EmailJS, restrict the service to your portfolio's deployed URL and turn
+   on its reCAPTCHA/spam-protection option if available.
 
 ## Tech stack
 

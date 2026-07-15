@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
 import { Loader2, Send, Mail, MapPin, ArrowUpRight } from "lucide-react";
+import emailjs from "@emailjs/browser";
 
 import { SectionHeading } from "@/components/sections/section-heading";
 import { Reveal } from "@/components/reveal";
@@ -37,6 +38,7 @@ const iconMap = {
 const contactSchema = z.object({
   name: z.string().min(2, "Enter your name."),
   email: z.string().email("Enter a valid email address."),
+  company: z.string().max(0),
   message: z.string().min(10, "Say a bit more — at least 10 characters."),
 });
 
@@ -47,20 +49,38 @@ export function Contact() {
 
   const form = useForm<ContactValues>({
     resolver: zodResolver(contactSchema),
-    defaultValues: { name: "", email: "", message: "" },
+    defaultValues: { name: "", email: "", message: "", company: "" },
   });
 
   async function onSubmit(values: ContactValues) {
+    // This hidden field should remain empty. Bots commonly fill every input.
+    if (values.company) {
+      form.reset();
+      return;
+    }
+
     setIsSubmitting(true);
     try {
-      // PLACEHOLDER — wire this up to /api/contact once Resend is configured.
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      });
+      // EmailJS public identifiers are provided at build time by Next.js.
+      const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
+      const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
+      const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
 
-      if (!res.ok) throw new Error("Request failed");
+      if (!serviceId || !templateId || !publicKey) {
+        throw new Error("EmailJS is not configured.");
+      }
+
+      await emailjs.send(
+        serviceId,
+        templateId,
+        {
+          from_name: values.name,
+          from_email: values.email,
+          reply_to: values.email,
+          message: values.message,
+        },
+        { publicKey },
+      );
 
       toast.success("Message sent — I'll get back to you soon.");
       form.reset();
@@ -182,6 +202,14 @@ export function Contact() {
                     onSubmit={form.handleSubmit(onSubmit)}
                     className="space-y-6"
                   >
+                    <input
+                      {...form.register("company")}
+                      type="text"
+                      tabIndex={-1}
+                      autoComplete="off"
+                      aria-hidden="true"
+                      className="absolute h-px w-px overflow-hidden opacity-0"
+                    />
                     <FormField
                       control={form.control}
                       name="name"
