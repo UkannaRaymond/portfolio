@@ -52,3 +52,5 @@ React Hook Form · Zod · Radix UI primitives (shadcn/ui pattern) · Lucide Reac
   since lucide-react no longer ships brand marks — swap these out if you'd
   prefer a different icon set.
 - `next build` and `next start` have been verified to run cleanly.
+
+The end
