@@ -29,6 +29,6 @@ export const skills: Skill[] = [
   { name: "Figma", category: "Tools" },
 
   { name: "Vitest", category: "Testing & Quality" },
-  { name: "Unit testing", category: "Testing & Quality" },
+  { name: "Playwright", category: "Testing & Quality" },
   { name: "React Testing Library", category: "Testing & Quality" },
 ];
