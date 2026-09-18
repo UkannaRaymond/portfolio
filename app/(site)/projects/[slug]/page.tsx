@@ -36,7 +36,10 @@ export async function generateMetadata({
   };
 }
 
-const caseStudySections: { key: keyof (typeof projects)[number]; label: string }[] = [
+const caseStudySections: {
+  key: keyof (typeof projects)[number];
+  label: string;
+}[] = [
   { key: "overview", label: "Overview" },
   { key: "problem", label: "Problem" },
   { key: "solution", label: "Solution" },
@@ -56,7 +59,7 @@ export default async function ProjectDetailPage({
   if (!project) notFound();
 
   return (
-    <article className="pt-32 pb-24 md:pt-40 md:pb-32">
+    <article className="pt-24 pb-24 md:pt-28 md:pb-32">
       <div className="container-page max-w-3xl">
         <Reveal>
           <Link
@@ -75,7 +78,9 @@ export default async function ProjectDetailPage({
                 {project.summary}
               </p>
             </div>
-            <span className="font-mono text-sm text-muted-foreground">{project.year}</span>
+            <span className="font-mono text-sm text-muted-foreground">
+              {project.year}
+            </span>
           </div>
 
           <div className="mt-6 flex flex-wrap items-center gap-3">
@@ -111,13 +116,13 @@ export default async function ProjectDetailPage({
 
         <Separator className="my-14" />
 
-        <div className="space-y-12">
+        <div className="space-y-7">
           {caseStudySections.map(({ key, label }, i) => (
             <Reveal key={key} delay={i * 0.04}>
               <h2 className="font-mono text-xs uppercase tracking-widest text-primary">
                 {label}
               </h2>
-              <p className="mt-3 max-w-2xl leading-relaxed text-muted-foreground">
+              <p className="mt-2 max-w-2xl leading-relaxed text-muted-foreground">
                 {project[key] as string}
               </p>
             </Reveal>

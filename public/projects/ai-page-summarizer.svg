@@ -1,0 +1,19 @@
+<svg width="1280" height="800" viewBox="0 0 1280 800" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e1b4b"/>
+      <stop offset="55%" stop-color="#4c1d95"/>
+      <stop offset="100%" stop-color="#0891b2"/>
+    </linearGradient>
+    <pattern id="grid4" width="52" height="52" patternUnits="userSpaceOnUse">
+      <path d="M 52 0 L 0 0 0 52" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1280" height="800" fill="url(#bg4)"/>
+  <rect width="1280" height="800" fill="url(#grid4)"/>
+  <circle cx="1120" cy="650" r="220" fill="rgba(34,211,238,0.16)"/>
+  <circle cx="180" cy="140" r="180" fill="rgba(167,139,250,0.18)"/>
+  <text x="640" y="370" font-family="'Segoe UI', system-ui, sans-serif" font-size="52" font-weight="700" fill="white" text-anchor="middle">AI Page Summarizer</text>
+  <text x="640" y="425" font-family="'Segoe UI', system-ui, sans-serif" font-size="22" fill="rgba(255,255,255,0.75)" text-anchor="middle">Chrome extension (Manifest V3)</text>
+  <text x="640" y="475" font-family="'Segoe UI', system-ui, sans-serif" font-size="16" fill="rgba(255,255,255,0.5)" text-anchor="middle">Replace with a real screenshot — /public/projects/ai-page-summarizer.png</text>
+</svg>

@@ -1,7 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import type { PointerEvent } from "react";
+import { ArrowRight, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/lib/data/metadata";
 import { Mail } from "lucide-react";
@@ -23,11 +24,33 @@ const item = {
 };
 
 export function Hero() {
+  const mouseX = useMotionValue(0.5);
+  const mouseY = useMotionValue(0.5);
+  const springConfig = { stiffness: 60, damping: 20, mass: 0.6 };
+  const glowX = useSpring(useTransform(mouseX, (v) => `${v * 100}%`), springConfig);
+  const glowY = useSpring(useTransform(mouseY, (v) => `${v * 100}%`), springConfig);
+
+  const handlePointerMove = (event: PointerEvent<HTMLElement>) => {
+    const bounds = event.currentTarget.getBoundingClientRect();
+    mouseX.set((event.clientX - bounds.left) / bounds.width);
+    mouseY.set((event.clientY - bounds.top) / bounds.height);
+  };
+
   return (
-    <section className="hero-surface relative isolate overflow-hidden pt-20 pb-20 md:pt-24 md:pb-24">
+    <section
+      onPointerMove={handlePointerMove}
+      className="hero-surface relative isolate overflow-hidden pt-20 pb-20 md:pt-24 md:pb-24"
+    >
       <div
         aria-hidden
         className="grid-glow pointer-events-none absolute inset-0 -z-10"
+      />
+      <motion.div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-10 hidden opacity-70 md:block"
+        style={{
+          background: `radial-gradient(600px circle at ${glowX} ${glowY}, hsl(var(--primary) / 0.10), transparent 60%)`,
+        }}
       />
       <motion.div
         variants={container}
@@ -128,6 +151,21 @@ export function Hero() {
             Hire Me
             <Mail className="ml-2 h-4 w-4" />
           </Button>
+        </motion.div>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1, duration: 0.6 }}
+        className="pointer-events-none absolute inset-x-0 bottom-6 hidden justify-center md:flex"
+      >
+        <motion.div
+          animate={{ y: [0, 6, 0] }}
+          transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+          className="flex flex-col items-center gap-1 text-muted-foreground"
+        >
+          <ChevronDown className="size-5" />
         </motion.div>
       </motion.div>
     </section>

@@ -22,7 +22,7 @@ export function Reveal({
       initial="hidden"
       whileInView="show"
       viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.4, ease: "easeOut", delay }}
+      transition={{ type: "spring", stiffness: 120, damping: 18, delay }}
       className={className}
     >
       {children}

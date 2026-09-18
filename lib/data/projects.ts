@@ -1,85 +1,152 @@
 import type { Project } from "@/types";
 
-// PLACEHOLDER — replace with your real projects, screenshots, and case studies.
 export const projects: Project[] = [
   {
-    slug: "ledgerline",
-    title: "Ledgerline",
-    description: "A real-time expense-splitting app for shared households.",
+    slug: "workflo",
+    title: "Workflo",
+    description: "An open-source alternative to Slack for team communication.",
     summary:
-      "Multi-tenant ledger app with real-time balances, recurring bills, and Plaid-linked settlements.",
-    image: "/projects/ledgerline.svg",
-    gallery: ["/projects/ledgerline.svg", "/projects/ledgerline.svg"],
-    tech: ["Next.js", "TypeScript", "PostgreSQL", "Prisma", "Stripe", "WebSockets"],
-    github: "https://github.com/your-username/ledgerline",
-    liveUrl: "https://ledgerline.example.com",
+      "A Slack-style team workspace: organizations, channels, threads, reactions, presence, and AI-assisted composing — with real-time delivery over a Cloudflare-hosted WebSocket layer.",
+    image: "/projects/workflo-homepage.PNG",
+    gallery: ["/projects/workflo-homepage.PNG", "/projects/workflo.PNG"],
+    tech: [
+      "Next.js",
+      "TypeScript",
+      "Tailwind CSS",
+      "shadcn/ui",
+      "oRPC",
+      "TanStack Query",
+      "PostgreSQL",
+      "Prisma",
+      "Kinde",
+      "PartyKit",
+      "TipTap",
+      "UploadThing",
+      "Vercel AI SDK",
+      "Arcjet",
+    ],
+    github: "https://github.com/UkannaRaymond/workflo",
+    liveUrl: "https://workflo-peach.vercel.app/",
     featured: true,
-    year: "2025",
+    year: "2026",
     role: "Solo builder — product, backend, and frontend",
     overview:
-      "Ledgerline keeps shared-household finances in sync without the group-chat math. Balances update in real time across every member's device.",
+      "Workflo is a Slack-style team workspace chat app built on the Next.js App Router, with organizations, channels, threads, emoji reactions, presence, rich-text messages, and AI-assisted composing and summarizing.",
     problem:
-      "Existing splitting apps settle up in batches and don't handle recurring shared bills or partial payments well, which leads to stale balances and awkward reconciliation.",
+      "Teams that want a Slack-like workspace either pay for a closed platform or stitch together disconnected open-source tools that don't share auth, presence, or real-time state.",
     solution:
-      "Built an event-sourced ledger where every expense, payment, and adjustment is an immutable event; balances are derived, not stored, so they're always auditable and always correct.",
+      "Built a single cohesive workspace app: each Kinde organization maps to a workspace containing channels, threaded replies render in a dedicated sidebar, and a TipTap-based composer supports rich text plus an AI 'Compose' assist. Reactions, presence, edits, and reply counts all propagate live through a PartyKit worker running on Cloudflare.",
     architecture:
-      "Next.js App Router frontend with server components for read-heavy views, a Node service for the event log, PostgreSQL with a append-only ledger table, and a WebSocket layer for live balance updates.",
+      "Next.js App Router frontend talking to a typed oRPC layer over a single /rpc route, with TanStack Query for client-side data fetching and PostgreSQL via Prisma for persistence. Real-time state (presence, live messages, reactions) is handled by PartyKit/partyserver deployed as a Cloudflare Worker, separate from the request/response API path. Arcjet sits in front of write paths for rate limiting, bot detection, a WAF-style shield, and sensitive-info scanning.",
     challenges:
-      "Getting real-time balance recalculation to stay fast as ledgers grew required moving from full replay to periodic snapshotting with incremental event application.",
+      "Keeping the real-time layer (PartyKit on Cloudflare) and the typed RPC layer (oRPC on Next.js) in sync — messages, reactions, and thread counts all need to feel instant on the sending client while staying consistent for every other connected member.",
     lessonsLearned:
-      "Event sourcing paid for its complexity almost immediately the first time a user disputed a balance — being able to replay exactly what happened made support trivial.",
+      "Separating 'durable state' (Postgres via Prisma) from 'live state' (PartyKit) early made the real-time features much easier to reason about than trying to push everything through one request/response API.",
   },
   {
-    slug: "fieldnote",
-    title: "Fieldnote",
-    description: "Offline-first note-taking for field researchers.",
+    slug: "newhaven-estate",
+    title: "NewHaven Estate",
+    description:
+      "A modern real estate platform for discovering and managing property listings.",
     summary:
-      "A PWA that lets research teams capture structured notes offline and sync seamlessly when back online.",
-    image: "/projects/fieldnote.svg",
-    gallery: ["/projects/fieldnote.svg", "/projects/fieldnote.svg"],
-    tech: ["React", "TypeScript", "IndexedDB", "Node.js", "GraphQL"],
-    github: "https://github.com/your-username/fieldnote",
-    liveUrl: "https://fieldnote.example.com",
+      "A property listings platform built with Next.js — browse and create listings, upload photos, and sign in with Google, all on a fast, responsive interface.",
+    image: "/projects/newHaven-homepage.PNG",
+    gallery: ["/projects/newHaven-homepage.PNG", "/projects/newHaven.PNG"],
+    tech: [
+      "Next.js",
+      "TypeScript",
+      "Neon (PostgreSQL)",
+      "Cloudinary",
+      "Better Auth",
+      "Google OAuth",
+      "Resend",
+    ],
+    github: "https://github.com/UkannaRaymond/NewHaven_Estate",
+    liveUrl: "https://new-haven-estate.vercel.app/",
     featured: true,
-    year: "2024",
-    role: "Full stack engineer, team of 3",
+    year: "2026",
+    role: "Solo builder — product, backend, and frontend",
     overview:
-      "Fieldnote lets ecology and social-science research teams capture structured, geotagged notes in areas with no connectivity, then sync cleanly once back online.",
+      "NewHaven Estate makes discovering and managing property listings simple: create and browse listings with image galleries, sign in with Google, and get email notifications — all on a responsive, modern interface.",
     problem:
-      "Field researchers were losing data to spotty connectivity and reconciling conflicting notes by hand when multiple people edited the same record.",
+      "Small real-estate operators often need a listings site but don't want the overhead of a full CMS just to post properties with photos and handle basic inquiries.",
     solution:
-      "Implemented an offline-first architecture using IndexedDB as the source of truth on-device, with a CRDT-based merge strategy for conflict resolution on sync.",
+      "Built a focused listings app with authentication (Better Auth + Google OAuth), Cloudinary-backed image uploads for property photos, Neon Postgres for storage, and Resend for transactional email.",
     architecture:
-      "React PWA with a service worker for offline asset caching, IndexedDB for local persistence, and a GraphQL API backed by Node.js that reconciles CRDT updates against PostgreSQL.",
+      "Next.js frontend and API routes, Neon serverless Postgres for listing data, Cloudinary for image hosting and transformation, Better Auth for session management, and Resend for email delivery.",
     challenges:
-      "Designing a merge strategy that field researchers could reason about — automatic merges needed to be predictable, not just conflict-free.",
+      "Handling multi-image property uploads reliably — validating, uploading to Cloudinary, and associating the results back with a listing record without leaving orphaned uploads on failure.",
     lessonsLearned:
-      "Offline-first is as much a UX problem as an engineering one; showing clear sync status mattered more to users than the merge algorithm underneath it.",
+      "Offloading image hosting and transformations to Cloudinary from day one avoided a lot of manual image-processing work later on.",
   },
   {
-    slug: "gridwatch",
-    title: "Gridwatch",
-    description: "A monitoring dashboard for distributed IoT sensor networks.",
+    slug: "inkflow",
+    title: "InkFlow",
+    description:
+      "A full-stack blogging platform with real-time comments and presence.",
     summary:
-      "Ingests and visualizes telemetry from thousands of field sensors with sub-second alerting.",
-    image: "/projects/gridwatch.svg",
-    gallery: ["/projects/gridwatch.svg", "/projects/gridwatch.svg"],
-    tech: ["Next.js", "Node.js", "Redis", "TimescaleDB", "Docker", "AWS"],
-    github: "https://github.com/your-username/gridwatch",
-    featured: false,
-    year: "2023",
-    role: "Backend-focused full stack engineer",
+      "A modern blogging platform built on Next.js 16 and Convex, with real-time comments, online presence, and authentication — designed for speed and a clean writing/reading experience.",
+    image: "/projects/inkflow.PNG",
+    gallery: ["/projects/inkflow.PNG", "/projects/inkflow-page.PNG"],
+    tech: [
+      "Next.js 16",
+      "React 19",
+      "TypeScript",
+      "Tailwind CSS",
+      "shadcn/ui",
+      "Convex",
+      "Better Auth",
+      "React Hook Form",
+      "Zod",
+    ],
+    github: "https://github.com/UkannaRaymond/blog-inkflow",
+    liveUrl: "https://blog-inkflow.vercel.app",
+    featured: true,
+    year: "2026",
+    role: "Solo builder — product, backend, and frontend",
     overview:
-      "Gridwatch ingests telemetry from distributed sensor hardware and gives operations teams a live view of network health with fast anomaly alerts.",
+      "InkFlow delivers a fast, secure, and responsive blogging experience: write and read posts, upload images, comment in real time, and see who else is online — all backed by Convex's real-time database and storage.",
     problem:
-      "The prior dashboard polled on a 30-second interval and couldn't scale past a few hundred sensors without lag, delaying anomaly detection.",
+      "Most lightweight blogging setups either need a separate CMS and database, or fall back to static regeneration that can't support real-time comments and presence out of the box.",
     solution:
-      "Re-architected ingestion around a Redis stream buffer feeding TimescaleDB, with a WebSocket push layer so the dashboard reflects new readings in under a second.",
+      "Used Convex as a single backend for data, file storage, and real-time subscriptions, paired with Better Auth for authentication. Comments and 'last seen' presence update live without any custom WebSocket plumbing, and forms are validated end-to-end with React Hook Form + Zod.",
     architecture:
-      "Sensors publish to an MQTT broker, a Node.js ingestion service normalizes and writes to Redis Streams, a worker persists to TimescaleDB, and Next.js serves the live dashboard.",
+      "Next.js 16 App Router with server and client components, Convex functions for queries/mutations/real-time subscriptions, Convex Storage for images, and Better Auth integrated directly with Convex for session management. Route and data caching are used to keep repeat visits fast.",
     challenges:
-      "Keeping ingestion lossless during traffic spikes required backpressure handling and at-least-once delivery with idempotent writes downstream.",
+      "Getting authentication state to work cleanly across Convex's real-time subscriptions and Next.js server components required careful handling of session context on both sides.",
     lessonsLearned:
-      "Time-series-specific storage (TimescaleDB) removed an entire category of manual bucketing/rollup code we'd been maintaining by hand.",
+      "Convex's built-in real-time layer removed the need to hand-roll WebSocket sync for comments and presence — a lot of what would normally be its own subsystem came for free.",
+  },
+  {
+    slug: "ai-page-summarizer",
+    title: "AI Page Summarizer",
+    description:
+      "A Chrome extension that summarizes any webpage with AI in one click.",
+    summary:
+      "A Manifest V3 Chrome extension that extracts a webpage's readable content and generates a structured AI summary — bullet points, key insights, and estimated reading time — right in the popup.",
+    image: "/projects/ai-page-summarizer.svg",
+    gallery: ["/projects/ai-page-summarizer.svg"],
+    tech: [
+      "Chrome Extension (Manifest V3)",
+      "JavaScript",
+      "AI API (OpenAI/Gemini)",
+    ],
+    github: "https://github.com/UkannaRaymond/AI-page-summarizer",
+    liveUrl: "",
+    featured: true,
+    year: "2026",
+    role: "Solo builder",
+    overview:
+      "AI Page Summarizer extracts meaningful content from the current webpage, sends it to an AI API, and displays a clean, structured summary — bullet points, key insights, and estimated reading time — directly in the extension popup.",
+    problem:
+      "Long articles take time to read, and existing 'summarize this page' tools are often locked behind a specific browser, paid tier, or heavyweight app.",
+    solution:
+      "Built a lightweight Manifest V3 extension that extracts readable page content client-side, sends it to an AI API for summarization, and renders the result in a fast popup UI — with optional in-page highlighting of key sections and adjustable summary length.",
+    architecture:
+      "A content script extracts readable text from the active tab, a background service worker handles the AI API request, and the popup UI renders the structured summary, with light/dark mode and a clipboard-copy action.",
+    challenges:
+      "Reliably extracting 'the actual article' from arbitrary page layouts (ads, navigation, sidebars) before sending anything to the AI API.",
+    lessonsLearned:
+      "Content extraction quality mattered more to the end result than prompt tweaking — cleaning the input aggressively made the summaries noticeably better.",
   },
 ];
